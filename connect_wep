@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Configuration
+interface=wlan0
+channel=10
+network=zippy  # network name
+key=0123456789 # password in Hex
+
+#ifconfig $interface down
+#airodump-ng --ivs -w FILE $interface --channel $channel
+#aircrack-ng -a 1 FILE
+iwconfig $interface essid $network
+iwconfig $interface key $key
+ifconfig $interface up
+dhcpcd $interface

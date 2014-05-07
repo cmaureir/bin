@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Check filetype
+filetype=$(file -ib $1  | awk '{print $1}' | cut -d/ -f 2 | sed 's/;//g')
+
+# Getting the name of the file without extension
+filename=$(echo $1 | cut -f1 -d.)
+
+if [[ $filetype != 'postscript' || $(echo $1 | cut -d. -f2) != "ps" ]];then
+    echo "Error: The file is not a postscript image"
+    exit
+fi
+
+# Check for ps2eps
+if [[ ! -a $(which ps2eps 2> /dev/null ) ]];then
+    echo "Error: The 'ps2eps' package is not installed"
+    exit
+fi
+
+# Check for epstopdf
+if [[ ! -a $(which epstopdf 2> /dev/null ) ]];then
+    echo "Error: The 'ps2eps' package is not installed"
+    exit
+fi
+
+# Executing ps2eps
+ps2eps -l -f -B -s b0 -c -n -P $filename.ps
+if [ $? -gt 0 ]; then
+    echo "Error: The ps2eps command failed"
+else
+    # Executing epstopdf
+    epstopdf $filename.eps
+    if [ $? -gt 0 ]; then
+        echo "Error: The epstopdf command failed"
+    else
+        echo "Success! :)"
+    fi
+fi
+
+
+

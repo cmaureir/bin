@@ -1,0 +1,4 @@
+#!/bin/bash
+
+out=$(amixer sget Master,0 | grep "%" | awk '{print $4}' | sed 's/\[\([^]]*\)\]/\1/g')
+echo $out

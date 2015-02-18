@@ -1,4 +1,11 @@
 #!/bin/bash
 
-out=$(amixer sget Master,0 | grep "%" | awk '{print $4}' | sed 's/\[\([^]]*\)\]/\1/g')
+#Simple mixer control 'Master',0
+#  Capabilities: pvolume pswitch pswitch-joined
+#  Playback channels: Front Left - Front Right
+#  Limits: Playback 0 - 65536
+#  Mono:
+#  Front Left: Playback 65536 [100%] [on]
+#  Front Right: Playback 65536 [100%] [on]
+out=$(amixer sget Master,0 | grep "%" |head -n 1 | awk '{print $5}' | sed 's/\[\([^]]*\)\]/\1/g')
 echo $out

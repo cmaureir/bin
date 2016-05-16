@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export TZ=America/Santiago
+date +"%k:%M"
+unset TZ

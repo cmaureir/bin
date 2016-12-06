@@ -1,4 +1,21 @@
 #!/bin/bash
 
-out=$(awk -F"[][]" '/%/ { print $2 }' <(amixer sget Master) | head -n 1)
-echo $out
+#out=$(awk -F"[][]" '/%/ { print $2 }' <(amixer sget Master) | head -n 1)
+current=$(pamixer --get-volume)
+
+if [[ $1 == "" ]];then
+    echo $current
+elif [[ $1 == "+" ]];then
+    pamixer -i 5
+elif [[ $1 == "-" ]];then
+    pamixer -d 5
+elif [[ $1 == "m" ]];then
+    mute_status=$(pamixer --get-mute)
+    echo $mute_status
+    if [[ $mute_status == "true" ]];then
+        pamixer -u
+    else
+        pamixer -m
+    fi
+
+fi

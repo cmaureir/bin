@@ -1,3 +1,8 @@
 #!/bin/bash
 
-ffmpeg -framerate 20 -i splash_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+#ffmpeg -framerate 20 -i xy_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+#ffmpeg -framerate 20 -i splash_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+#ffmpeg -framerate 20 -i fig_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+ffmpeg -framerate 20 -i join_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+#ffmpeg -framerate 20 -i new_%05d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+#ffmpeg -framerate 20 -i splash_xy_%03d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4

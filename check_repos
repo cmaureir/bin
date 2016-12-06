@@ -1,0 +1,37 @@
+#!/bin/bash
+
+if [[ $1 == "" ]];then
+    DEPTH=1
+else
+    DEPTH=$1
+fi
+
+CURRENT=`pwd`
+for i in $(find . -maxdepth $DEPTH -type d);do
+    if [[ $i != "." ]];then
+
+        # Entering repo
+        cd $i
+
+        # Check if it is a git reposity, looking at the `.git` directory
+        git_dir=$(find . -maxdepth 1 -type d -name ".git" | wc -l)
+        if [[ $git_dir == 1 ]];then
+
+            # Counting lines omitting errors
+            res=$(git status 2> /dev/null| wc -l)
+
+            # Cleanning directory preamble
+            i=$(echo $i | sed 's/\.\///g')
+
+            if [[ $res == 3 ]];then
+                printf '%5s : %s\n' "[OK]" $i
+            else if [[ $res != 0 ]];then
+                    printf '%5s : %s\n' "[!!]" $i
+                 fi
+            fi # res
+        fi # git_dir
+
+        # Going back
+        cd $CURRENT
+    fi
+done

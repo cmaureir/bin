@@ -3,12 +3,14 @@
 import sys
 import os
 
+provider="github.com"
+
 repo = sys.argv[1]
 
 if len(repo.split("/")) != 2:
     print("Error")
     sys.exit(1)
 else:
-    cmd = "git clone git@github.com:"
+    cmd = "git clone git@"+provider+":"
     cmd += repo
     os.system(cmd)

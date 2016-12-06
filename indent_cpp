@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [[ $1 == "" ]];then
+    indent -bad -bap -nbc -br -nce -nut -i4
+    #indent -bad -bap -nbc -bl -nce -nut -i4
+else
+    for i in $(find . -type f -name "*.$1");do
+        echo "Indenting $i..."
+        indent -bad -bap -nbc -br -nce -nut -i4 < $i > TMP
+        mv -f TMP $i
+    done
+fi
+

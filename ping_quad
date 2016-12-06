@@ -1,0 +1,29 @@
+#!/bin/env python
+
+import subprocess
+import os
+import time
+
+#files = <list of file names>
+#command = "/bin/touch"
+processes = set()
+max_processes = 4
+
+#for name in files:
+#    processes.add(subprocess.Popen([command, name]))
+#    if len(processes) >= max_processes:
+#        os.wait()
+#        processes.difference_update([
+#            p for p in processes if p.poll() is not None])
+#
+#
+
+for i in range(1,100):
+    num = str(i).zfill(2)
+    cmd = "/bin/ping -c 1 quad-sl-%s.aei.mpg.de" % (num)
+    print(cmd)
+    processes.add(subprocess.Popen(cmd.split(" ")))
+    if len(processes) >= max_processes:
+        os.wait()
+        processes.difference_update([
+            p for p in processes if p.poll() is not None])

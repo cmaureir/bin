@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export TZ=PST8PDT
+date +"%k:%M"
+unset TZ

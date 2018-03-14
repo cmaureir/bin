@@ -1,0 +1,47 @@
+#!/bin/bash
+
+export PATH=$PATH:/home/cmaureir/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+if [[ $1 == "5.6" || $1 == "5.9" || $1 == "dev" ]];then
+
+    # Commented out for the virtualenv
+    # Python stuff
+    echo -n "Setting up python binary: "
+    if [[ $2 == "" && $1 == "5.9" ]];then
+        echo "Activating envQt5.9Py3.6-debug"
+        source ~/dev/envQt5.9/bin/activate
+    fi
+
+    # Going to the directory
+    #cd ~/dev/pyside$1/ || echo "Directory not found"
+
+    # CLANG
+    echo -n "Exporting CLANG_INSTALL_DIR: "
+    export CLANG_INSTALL_DIR=/home/cmaureir/dev/libclang || echo "Failing exporting CLANG_INSTALL_DIR"
+    echo $CLANG_INSTALL_DIR
+
+    # Icecream stuff
+    echo -n "Setting up Icecream environment: "
+    export ICECC_VERSION=/home/cmaureir/902c6235010b70d753b7049016a3cb9b.tar.gz
+    export PATH=/usr/lib/icecream/libexec/icecc/bin:$PATH
+    if ! [[ -f $ICECC_VERSION ]];then
+        echo "Icecream profile file not found"
+    else
+        echo "Done"
+    fi
+
+    # Qt PATH
+    echo -n "Exporting Qmake directory: "
+    export QMAKE_PATH=/home/cmaureir/dev/qt$1-install/qtbase/bin
+    if ! [[ -f $QMAKE_PATH/qmake ]];then
+        echo "Qmake binary does not exist "$QMAKE_PATH
+    else
+        export PATH=$QMAKE_PATH:$PATH
+        echo $QMAKE_PATH
+    fi
+
+    echo
+    echo $PATH
+else
+    echo "Version \"$1\" not supported"
+fi

@@ -3,19 +3,30 @@
 #out=$(awk -F"[][]" '/%/ { print $2 }' <(amixer sget Master) | head -n 1)
 current=$(pamixer --get-volume)
 
+re='^[0-9]+$'
+
 if [[ $1 == "" ]];then
     echo $current
-elif [[ $1 == "+" ]];then
-    pamixer -i 5
-elif [[ $1 == "-" ]];then
-    pamixer -d 5
-elif [[ $1 == "m" ]];then
-    mute_status=$(pamixer --get-mute)
-    echo $mute_status
-    if [[ $mute_status == "true" ]];then
-        pamixer -u
+else
+    if [[ $1 == "+" ]];then
+        pamixer -i 5
+    elif [[ $1 == "-" ]];then
+        pamixer -d 5
+    elif [[ $1 == "m" ]];then
+        mute_status=$(pamixer --get-mute)
+        echo $mute_status
+        if [[ $mute_status == "true" ]];then
+            pamixer -u
+        else
+            pamixer -m
+        fi
+        echo $current
+    elif [[ $1 =~ $re ]] ; then
+        pamixer --set-volume  $1
     else
-        pamixer -m
+        echo "Invalid option"
     fi
-
+    current=$(pamixer --get-volume)
+    echo "Volume:" $current
 fi
+

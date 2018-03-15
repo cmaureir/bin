@@ -2,7 +2,7 @@
 
 # Author: Cristián Maureira
 # Created: 16.06.2014
-# Update: 14.03.2018
+# Updated: 14.03.2018
 
 import sys
 import logging
@@ -18,9 +18,6 @@ def get_current_brightness():
     except CalledProcessError:
         result = None
     return result
-
-#echo $(( $current / 100 ))
-#xrandr --output eDP-1 --brightness 1
 
 def get_connected_device():
     cmd = "xrandr -q | grep '\ connected' | awk '{print $1}'"
@@ -50,7 +47,6 @@ def change_brightness(current, option):
     cmd = "xrandr --output {0} --brightness {1:.2f}".format(device, value)
     try:
         result = run(cmd.split(), check=True, stdout=PIPE)
-        #result = None
     except CalledProcessError:
         logging.error("Something is wrong with the command: {}".format(cmd))
 

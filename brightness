@@ -10,51 +10,52 @@ from subprocess import run, PIPE, CalledProcessError
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-def get_current_brightness():
-    cmd = "xrandr --verbose | grep Brightness | awk '{print $2}'"
+def execute_command(cmd, ret=True):
+
     try:
         result = run(cmd, shell=True, check=True, stdout=PIPE)
-        result = result.stdout.strip().decode("utf-8")
     except CalledProcessError:
         result = None
+        logging.error("Something is wrong with the command: {}".format(cmd))
+
+    result = result.stdout.strip().decode("utf-8") if ret else None
+
     return result
+
+def get_current_brightness(directory):
+    cmd = "cat /sys/class/backlight/{}/actual_brightness".format(directory)
+    return execute_command(cmd)
 
 def get_connected_device():
     cmd = "xrandr -q | grep '\ connected' | awk '{print $1}'"
-    try:
-        device = run(cmd, shell=True, check=True, stdout=PIPE)
-        device = device.stdout.strip().decode("utf-8")
-    except CalledProcessError:
-        device = None
-    return device
+    return execute_command(cmd)
 
-def change_brightness(current, option):
+def change_brightness(current, option, max_brightness, directory):
     device = get_connected_device()
-    value = float(current)
+    value = float(current)/max_brightness
 
-    if 0.1 <= value <= 1.0:
-        if option == "-":
-            value -= 0.1
-        elif option == "+":
-            value += 0.1
-        elif option == "":
-            print(int(value*100))
-        else:
-            value = float(option)
-            if 1 < value <= 100:
-                value /= 100
+    if option == "-":
+        value -= 0.1
+    elif option == "+":
+        value += 0.1
+    elif option == "":
+        print("{0:.1f}".format(value))
+    else:
+        value = float(option)
 
-    cmd = "xrandr --output {0} --brightness {1:.2f}".format(device, value)
-    try:
-        result = run(cmd.split(), check=True, stdout=PIPE)
-    except CalledProcessError:
-        logging.error("Something is wrong with the command: {}".format(cmd))
+    value = 1.0 if value > 1.0 else value
+    value = 0.1 if value <= 0.1 else value
+    value = int(value*max_brightness)
 
-def check_number(option):
+
+    cmd = "echo {} > /sys/class/backlight/{}/brightness".format(value, directory)
+    execute_command(cmd, ret=False)
+
+def check_number(option, max_brightness):
     result = False
     try:
         option = float(option)
-        if 0 <= option <= 100:
+        if 0 < option <= 1:
             result = True
         else:
             logging.error("Wrong argument, use number between 0 and 1")
@@ -63,13 +64,23 @@ def check_number(option):
 
     return result
 
+
 if __name__ == "__main__":
 
     option = sys.argv[1] if len(sys.argv) > 1 else ""
 
-    current = get_current_brightness()
+    cmd = "ls /sys/class/backlight/"
+    directory = execute_command(cmd)
+
+    cmd = "cat /sys/class/backlight/{}/max_brightness".format(directory)
+    max_brightness = float(execute_command(cmd))
+    if not max_brightness:
+        max_brightness = 100
+
+
+    current = get_current_brightness(directory)
     if current:
-        if option in  ["", "-", "+"] or check_number(option):
-            change_brightness(current, option)
+        if option in  ["", "-", "+"] or check_number(option, max_brightness):
+            change_brightness(current, option, max_brightness, directory)
         else:
             logging.error("Option required ('-', '+' or 'number[0-1]')")

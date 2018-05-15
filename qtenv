@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+import os
+import sys
+from subprocess import check_output, PIPE
+
+def get_clang_path(clang):
+    if clang == "3.9":
+        return "/home/crmaurei/dev/libclang"
+    elif clang == "5.0":
+        return "/home/crmaurei/dev/libclang50"
+    elif clang == "6.0":
+        return  "/home/crmaurei/dev/libclang60"
+    else:
+        return None
+
+def get_qmake_path(qtver):
+    qmake_path = "/home/crmaurei/dev/qt{}-install/qtbase/bin".format(qtver)
+    if os.path.isfile("{}/qmake".format(qmake_path)):
+        return qmake_path
+    else:
+        return None
+
+def get_venv_path(qtver, pyver):
+    if pyver[-1:] == "d":
+        venv = "/home/crmaurei/dev/envQt{}Py{}-debug/".format(qtver,
+            pyver.replace("d",""))
+    else:
+        venv = "/home/crmaurei/dev/envQt{}Py{}/".format(qtver, pyver)
+
+    source_venv = "{}bin/activate".format(venv)
+    if os.path.isdir(venv) and os.path.isfile(source_venv):
+        return source_venv
+    else:
+        return None
+
+path  = "/home/crmaurei/bin"
+path += ":/usr/local/bin"
+path += ":/usr/bin:/bin:/usr/local/sbin"
+path += ":/usr/bin/site_perl"
+path += ":/usr/bin/vendor_perl"
+path += ":/usr/bin/core_perl"
+path += ":/home/crmaurei/.gem/ruby/2.4.0/bin"
+path += ":/home/crmaurei/.rvm/bin"
+
+qtver = "5.9"
+pyver = "3.6"
+clang = "3.9"
+qt_versions = ["5.6", "5.9", "5.11", "dev"]
+py_versions = ["2.7.5", "2.7", "3.5", "3.6", "3.6d"]
+cl_versions = ["3.9", "5.0", "6.0"]
+
+args = sys.argv
+largs = len(args)
+
+# Reading command line options
+if largs > 1:
+    qtver = args[1]
+    if largs > 2:
+        pyver = args[2]
+        if largs > 3:
+            clang = args[3]
+
+# Check for wrong options
+if not (qtver in qt_versions):
+    print("Qt version: {} not supported".format(qtver))
+    sys.exit(1)
+if not (pyver in py_versions):
+    print("Python version: {} not supported".format(pyver))
+    sys.exit(1)
+if not (clang in cl_versions):
+    print("Clang version: {} not supported".format(clang))
+    sys.exit(1)
+
+## Starting setting up variables
+output = "export "
+
+# Icecream stuff
+icecream_file = "/home/crmaurei/902c6235010b70d753b7049016a3cb9b.tar.gz"
+icecream_path = "/usr/lib/icecream/libexec/icecc/bin"
+if os.path.isfile(icecream_file):
+    output += "ICECC_VERSION={} ".format(icecream_file)
+    output += "PATH={}:{} ".format(icecream_path, path)
+else:
+    print("Error adding Icecream path", file=sys.stderr)
+    sys.exit(1)
+
+# CLANG
+clang_path = get_clang_path(clang)
+if clang_path:
+    output += "CLANG_INSTALL_DIR={} ".format(clang_path)
+else:
+    print("Error adding Clang path", file=sys.stderr)
+    sys.exit(1)
+
+# Qt PATH
+qmake_path = get_qmake_path(qtver)
+if qmake_path:
+    output += "QMAKE_PATH={} ".format(qmake_path)
+    output += "PATH={}:$PATH ".format(qmake_path)
+else:
+    print("Error adding QMake and modifying the PATH", file=sys.stderr)
+    sys.exit(1)
+
+# Python virtual environment
+source_venv = get_venv_path(qtver, pyver)
+if source_venv:
+    output += ";source {} ".format(source_venv)
+else:
+    print("Error adding source virtual environment: {}".format(source_venv), file=sys.stderr)
+    sys.exit(1)
+
+# Adding my own FZF
+output += "source /home/crmaurei/.fzf.zsh;"
+
+# Printing last result
+print(output)

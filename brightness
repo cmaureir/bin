@@ -33,6 +33,7 @@ def get_connected_device():
 def change_brightness(current, option, max_brightness, directory):
     device = get_connected_device()
     value = float(current)/max_brightness
+    no_change = False
 
     if option == "-":
         value -= 0.1
@@ -40,16 +41,18 @@ def change_brightness(current, option, max_brightness, directory):
         value += 0.1
     elif option == "":
         print("{0:.1f}".format(value))
+        no_change = True
     else:
         value = float(option)
 
-    value = 1.0 if value > 1.0 else value
-    value = 0.1 if value <= 0.1 else value
-    value = int(value*max_brightness)
+    if not no_change:
+        value = 1.0 if value > 1.0 else value
+        value = 0.1 if value <= 0.1 else value
+        value = int(value*max_brightness)
 
 
-    cmd = "echo {} > /sys/class/backlight/{}/brightness".format(value, directory)
-    execute_command(cmd, ret=False)
+        cmd = "echo {} > /sys/class/backlight/{}/brightness".format(value, directory)
+        execute_command(cmd, ret=False)
 
 def check_number(option, max_brightness):
     result = False

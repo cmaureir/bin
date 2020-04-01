@@ -7,26 +7,13 @@ re='^[0-9]+$'
 
 if [[ $1 == "" ]];then
     echo $current
-else
-    if [[ $1 == "+" ]];then
-        pamixer -i 5
-    elif [[ $1 == "-" ]];then
-        pamixer -d 5
-    elif [[ $1 == "m" ]];then
-        mute_status=$(pamixer --get-mute)
-        echo $mute_status
-        if [[ $mute_status == "true" ]];then
-            pamixer -u
-        else
-            pamixer -m
-        fi
-        echo $current
-    elif [[ $1 =~ $re ]] ; then
-        pamixer --set-volume  $1
-    else
-        echo "Invalid option"
-    fi
-    current=$(pamixer --get-volume)
-    echo "Volume:" $current
+elif [[ $1 == "+" ]];then
+    pamixer -i 5
+elif [[ $1 == "-" ]];then
+    pamixer -d 5
+elif [[ $1 == "m" ]];then
+    pamixer -t
+elif [[ $1 == "p" ]];then
+    pacmd suspend 1
 fi
 

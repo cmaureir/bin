@@ -5,7 +5,8 @@
 #ffmpeg -framerate 20 -i splash_dx_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
 #ffmpeg -framerate 20 -i fig_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
 #ffmpeg -framerate 12 -i join_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
-ffmpeg -framerate 20 -i join_r10_%05d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+#ffmpeg -framerate 20 -i join_final_%05d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+ffmpeg -framerate 20 -i join_r5_%05d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
 #ffmpeg -framerate 12 -i F0p0_join_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
 #ffmpeg -framerate 12 -i F0p5_join_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p F0p5.mp4
 #ffmpeg -framerate 12 -i F1p0_join_%04d.png -c:v libx264 -r 30 -pix_fmt yuv420p F1p0.mp4

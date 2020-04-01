@@ -36,18 +36,18 @@ def change_brightness(current, option, max_brightness, directory):
     no_change = False
 
     if option == "-":
-        value -= 0.1
+        value -= 0.05
     elif option == "+":
-        value += 0.1
+        value += 0.05
     elif option == "":
-        print("{0:.1f}".format(value))
+        print("{0:.2f}".format(value))
         no_change = True
     else:
         value = float(option)
 
     if not no_change:
         value = 1.0 if value > 1.0 else value
-        value = 0.1 if value <= 0.1 else value
+        value = 0.05 if value <= 0.05 else value
         value = int(value*max_brightness)
 
 

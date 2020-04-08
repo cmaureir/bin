@@ -1,0 +1,31 @@
+#!/bin/bash
+
+interface=$1
+new=$2
+real=$3
+
+if [[ $interface == "" ]];then
+    echo "Usage:"
+    echo "    ./change_mac <interface>"
+    echo
+    echo "Available interfaces":
+    echo $(ifconfig -a| grep mtu | awk '{print $1}' | sed 's/://g')
+else
+    echo "Current MAC addr:" $(ifconfig $interface | grep ether | awk '{print $2}')
+    if [[ $new != "" ]];then
+        out=$(echo $new | sed -n "/^\([0-9A-Z][0-9A-Z]:\)\{5\}[0-9A-Z][0-9A-Z]$/p")
+        if [[ $out != "" ]];then
+            if [[ $real == "yes" ]];then
+                #ifconfig $interface down
+                #ifconfig $interface hw ether $new
+                #ifconfig $interface up
+                echo "lol"
+            fi
+            echo "New MAC addr:" $(ifconfig $interface | grep ether | awk '{print $2}')
+        else
+            echo "Invalid MAC Addres"
+        fi
+    fi
+fi
+
+

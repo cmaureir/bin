@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# First section of the video to cut
+T1="00:00:10"
+T1HALF="00:00:05"
+# Second section duration
+T2="00:00:30"
+# Third section that last until the end
+# (it's T1 + T2)
+T3="00:00:40"
+
+# Speed (1 = 100%)
+SPEED=0.3
+
+if [[ $1 != "" ]];then
+    ffmpeg -i $1 -t $T1 part-1.mp4
+    ffmpeg -ss $T1HALF -i $1 -ss $T1HALF -t $T2  slow.mp4
+    ffmpeg -i $1 -ss $T3 part-3.mp4
+
+    ffmpeg -i slow.mp4 -filter:v "setpts=$SPEED*PTS" part-2.mp4
+
+    for f in $PWD/part-*.mp4;
+        do echo "file '$f'" >> myvideos.txt
+    done
+    ffmpeg -f concat -safe 0 -i myvideos.txt -c copy output.mp4
+
+    # Removing temporary files
+    rm -f part-*.mp4 slow.mp4 myvideos.txt
+else
+    echo "Usage:\n\tspeed_up_videos VIDEO"
+fi

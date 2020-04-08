@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "git remote add upstream https://...."
+echo "git fetch upstream"
+echo "git rebase upstream/master"
+echo "git push origin master --force"
